@@ -1,6 +1,8 @@
 vendor
 pb_data
 __debug_bin*
+dist
+
 .vscode
 ./ikit
 

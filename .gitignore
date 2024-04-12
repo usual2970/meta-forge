@@ -1,0 +1,10 @@
+vendor
+pb_data
+__debug_bin*
+.vscode
+./ikit
+
+github.com/usual2970/meta-forge
+
+test_data
+weaviate_data

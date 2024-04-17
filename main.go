@@ -21,6 +21,7 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
 	_ "github.com/pocketbase/pocketbase/migrations"
+	_ "github.com/usual2970/meta-forge/migrations"
 )
 
 const mfPath = "/mf/"

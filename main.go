@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/spf13/cast"
 	"github.com/usual2970/meta-forge/internal/routes"
 	"github.com/usual2970/meta-forge/internal/util/app"
 	"github.com/usual2970/meta-forge/ui"
@@ -15,6 +17,7 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 
 	"github.com/usual2970/meta-forge/internal/repository/secret"
+	systemsettings "github.com/usual2970/meta-forge/internal/repository/system_settings"
 	wecomRepository "github.com/usual2970/meta-forge/internal/repository/wecom"
 	"github.com/usual2970/meta-forge/internal/usecase/wecom"
 
@@ -79,6 +82,8 @@ func main() {
 	}
 }
 
+const hasInitializedCacheKey = "@hasInitialized"
+
 func installerRedirect(app core.App) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -88,7 +93,42 @@ func installerRedirect(app core.App) echo.MiddlewareFunc {
 				return next(c)
 			}
 
+			hasInitialized := cast.ToBool(app.Store().Get(hasInitializedCacheKey))
+
+			if !hasInitialized {
+				// update the cache to make sure that the admin wasn't created by another process
+				if err := updateHasInitializedCache(); err != nil {
+					return err
+				}
+				hasInitialized = cast.ToBool(app.Store().Get(hasInitializedCacheKey))
+			}
+
+			_, hasInitialParam := c.Request().URL.Query()["initial"]
+
+			if !hasInitialized && !hasInitialParam {
+				// redirect to the initialize page
+				return c.Redirect(http.StatusTemporaryRedirect, "?initial#/initial")
+			}
+
+			if hasInitialized && hasInitialParam {
+				// clear the initial param
+				return c.Redirect(http.StatusTemporaryRedirect, "?#/")
+			}
+
 			return next(c)
 		}
 	}
+}
+
+func updateHasInitializedCache() error {
+	repo := systemsettings.NewRepository()
+	rs, _ := repo.Get(context.Background(), hasInitializedCacheKey)
+
+	if rs == nil {
+		return nil
+	}
+
+	app.Get().Store().Set(hasInitializedCacheKey, cast.ToBool(rs["value"]))
+	return nil
+
 }

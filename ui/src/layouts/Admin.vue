@@ -47,6 +47,10 @@ const selectedKeys = ref(['1'])
 const collapsed = ref(false)
 </script>
 <style>
+#mf-layout {
+  min-height: 100vh;
+}
+
 #mf-layout .trigger {
   font-size: 18px;
   line-height: 64px;

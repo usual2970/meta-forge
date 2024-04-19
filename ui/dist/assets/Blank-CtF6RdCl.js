@@ -1,1 +1,0 @@
-import{_ as o,o as n,c as r,b as t,e as c}from"./index-DczDWcVT.js";const s={};function a(_,l){const e=c("router-view");return n(),r("div",null,[t(e)])}const i=o(s,[["render",a]]);export{i as default};

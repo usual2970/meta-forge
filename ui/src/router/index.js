@@ -14,6 +14,14 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/initial',
+      name: 'initial',
+      meta:{
+        layout:'Blank'
+      },
+      component: () => import('../views/InitialView.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       meta:{

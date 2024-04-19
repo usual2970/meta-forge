@@ -1,7 +1,7 @@
 <template>
-  <a-layout id="mf-layout">
+  <a-layout id="mf-layout" class="font-mono">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-      <div class="logo">adfadf</div>
+      <div class="p-4 text-center text-white font-extrabold text-xl">MetaForge</div>
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item key="1">
           <user-outlined />

@@ -25,7 +25,7 @@
       </a-form-item>
 
       <a-form-item label="密码" :labelCol="{ span: 5 }">
-        <a-input></a-input>
+        <a-input-password></a-input-password>
       </a-form-item>
 
       <a-form-item label="数据库" :labelCol="{ span: 5 }">

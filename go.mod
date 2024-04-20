@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/anhao/go-ernie v1.0.8
 	github.com/bytedance/gopkg v0.0.0-20240315062850-21fc7a1671a8
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gogf/gf/v2 v2.6.4
 	github.com/gojek/heimdall/v7 v7.0.2
@@ -13,10 +14,12 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
+	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/panjf2000/ants/v2 v2.9.0
 	github.com/playwright-community/playwright-go v0.4201.0
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.20.5
+	github.com/spf13/cast v1.6.0
 	github.com/tmc/langchaingo v0.1.7
 	github.com/weaviate/weaviate v1.23.9
 	github.com/weaviate/weaviate-go-client/v4 v4.12.1
@@ -96,7 +99,6 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-sqlite3 v1.14.19 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/microcosm-cc/bluemonday v1.0.26 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
@@ -113,7 +115,6 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/cobra v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect

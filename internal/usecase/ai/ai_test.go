@@ -22,7 +22,7 @@ import (
 	"github.com/weaviate/weaviate/entities/models"
 )
 
-const testDataDir = "/Users/liuxuanyao/work/github.com/usual2970/meta-forge/pb_data"
+const testDataDir = "/Users/liuxuanyao/work/meta-forge/pb_data"
 
 func Test_usecase_UploadDoc(t *testing.T) {
 	app, err := tests.NewTestApp(testDataDir)

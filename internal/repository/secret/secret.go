@@ -31,6 +31,7 @@ func (r *repository) Get(ctx context.Context, filter string) (*domain.Secret, er
 	ext := make(map[string]string)
 
 	record.UnmarshalJSONField("ext", &ext)
+
 	meta := domain.Meta{
 		Id:      record.Id,
 		Created: record.GetTime("created"),

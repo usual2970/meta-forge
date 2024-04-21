@@ -2,6 +2,7 @@ package systemsettings
 
 import (
 	"context"
+	"errors"
 
 	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/models"
@@ -17,17 +18,19 @@ func NewRepository() domain.ISystemSettingsRepository {
 }
 
 func (r *SystemSettingsRepository) BatchSave(ctx context.Context, settings []domain.SystemSetting) error {
-	collection, err := app.Get().Dao().FindCollectionByNameOrId("mf_system_settings")
+	collection, err := app.GetDao().FindCollectionByNameOrId("mf_system_settings")
 	if err != nil {
 		return err
 	}
 
-	if err := app.Get().Dao().RunInTransaction(func(txDao *daos.Dao) error {
+	if err := app.GetDao().RunInTransaction(func(txDao *daos.Dao) error {
 		for _, setting := range settings {
 			record := models.NewRecord(collection)
 			record.Set("uri", setting.Uri)
 			record.Set("description", setting.Description)
-			record.Set("data", setting.Data)
+			record.Set("data", map[string]interface{}{
+				"value": setting.Data,
+			})
 
 			if err := txDao.SaveRecord(record); err != nil {
 				return err
@@ -41,9 +44,9 @@ func (r *SystemSettingsRepository) BatchSave(ctx context.Context, settings []dom
 
 }
 
-func (r *SystemSettingsRepository) Get(ctx context.Context, key string) (map[string]interface{}, error) {
+func (r *SystemSettingsRepository) Get(ctx context.Context, key string) (interface{}, error) {
 
-	record, err := app.Get().Dao().FindFirstRecordByFilter("mf_system_settings",
+	record, err := app.GetDao().FindFirstRecordByFilter("mf_system_settings",
 		"uri='"+key+"'",
 	)
 	if err != nil {
@@ -53,5 +56,8 @@ func (r *SystemSettingsRepository) Get(ctx context.Context, key string) (map[str
 	if err := record.UnmarshalJSONField("data", &rs); err != nil {
 		return nil, err
 	}
-	return rs, nil
+	if res, ok := rs["value"]; ok {
+		return res, nil
+	}
+	return nil, errors.New("not found")
 }

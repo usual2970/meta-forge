@@ -15,6 +15,6 @@ func Route(echo *echo.Echo) {
 	systemSettingsRepo := systemSettingsRepository.NewRepository()
 
 	systemSettingsUc := systemSettingsUC.NewUsecase(systemSettingsRepo)
-
-	systemsettings.Register(echo, systemSettingsUc)
+	group := echo.Group("/api/v1")
+	systemsettings.Register(group, systemSettingsUc)
 }

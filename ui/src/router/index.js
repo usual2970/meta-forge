@@ -11,7 +11,7 @@ const router = createRouter({
       meta:{
         layout:'Admin'
       },
-      component: HomeView
+      component: HomeView,
     },
     {
       path: '/initial',

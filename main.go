@@ -128,7 +128,7 @@ func updateHasInitializedCache() error {
 		return nil
 	}
 
-	app.Get().Store().Set(hasInitializedCacheKey, cast.ToBool(rs["value"]))
+	app.Get().Store().Set(hasInitializedCacheKey, cast.ToBool(rs))
 	return nil
 
 }

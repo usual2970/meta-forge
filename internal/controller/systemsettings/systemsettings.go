@@ -24,9 +24,20 @@ func (c *controller) Initail(ctx echo.Context) error {
 
 }
 
-func Register(route *echo.Echo, usecase domain.ISystemSettingsUsecase) {
+func (c *controller) Get(ctx echo.Context) error {
+	key := ctx.QueryParam("key")
+	value, err := c.usecase.Get(ctx.Request().Context(), key)
+	if err != nil {
+		return resp.Err(ctx, err)
+	}
+
+	return resp.Succ(ctx, value)
+}
+
+func Register(route *echo.Group, usecase domain.ISystemSettingsUsecase) {
 	c := &controller{
 		usecase: usecase,
 	}
 	route.POST("/systemsettings/initialize", c.Initail)
+	route.GET("/systemsettings/get", c.Get)
 }

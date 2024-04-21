@@ -20,8 +20,12 @@ func NewUsecase(repo domain.ISystemSettingsRepository) domain.ISystemSettingsUse
 	}
 }
 
-func (u *usecase) Get(ctx context.Context, key string) (map[string]interface{}, error) {
-	return nil, nil
+func (u *usecase) Get(ctx context.Context, key string) (interface{}, error) {
+	data, err := u.repo.Get(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 func (u *usecase) Initialize(ctx context.Context, req *domain.InitializeReq) error {
 
@@ -45,10 +49,8 @@ func (u *usecase) Initialize(ctx context.Context, req *domain.InitializeReq) err
 			Description: "数据库配置",
 		},
 		{
-			Uri: "@hasInitialized",
-			Data: map[string]int{
-				"value": 1,
-			},
+			Uri:         "@hasInitialized",
+			Data:        1,
 			Description: "初始化标识",
 		},
 		{

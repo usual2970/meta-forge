@@ -18,7 +18,7 @@ type InitializeReq struct {
 }
 
 type ISystemSettingsUsecase interface {
-	Get(ctx context.Context, key string) (map[string]interface{}, error)
+	Get(ctx context.Context, key string) (interface{}, error)
 	Initialize(ctx context.Context, req *InitializeReq) error
 }
 
@@ -30,6 +30,6 @@ type SystemSetting struct {
 }
 
 type ISystemSettingsRepository interface {
-	Get(ctx context.Context, key string) (map[string]interface{}, error)
+	Get(ctx context.Context, key string) (interface{}, error)
 	BatchSave(ctx context.Context, settings []SystemSetting) error
 }

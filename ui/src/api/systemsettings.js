@@ -10,6 +10,14 @@ export const get = (data) => {
     })
 }
 
+export const batchGet=(data) => {
+    return service({
+        url: "/api/v1/systemsettings/batch-get",
+        method: 'get',
+        params: data
+    })
+}
+
 
 export const initialize = (data) => {
     return service({

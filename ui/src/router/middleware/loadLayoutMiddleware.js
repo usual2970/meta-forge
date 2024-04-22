@@ -6,13 +6,7 @@
  * If the layout we want to display is not found, loads the default layout App Layout Default.vue
  * */
 
-import {get} from '@/api/systemsettings.js'
-
 export async function loadLayoutMiddleware(route) {
-    const resp= await get({
-        "key": "layout"
-    })
-    console.log(resp)
     try {
         let layout = route.meta.layout
         let layoutComponent = await import(`../../layouts/${layout}.vue`)

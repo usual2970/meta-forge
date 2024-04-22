@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { loadLayoutMiddleware } from './middleware/loadLayoutMiddleware'
+import { initializeMiddleware } from './middleware/initializeMiddleware'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -35,6 +36,7 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach(initializeMiddleware)
 router.beforeEach(loadLayoutMiddleware)
 
 export default router

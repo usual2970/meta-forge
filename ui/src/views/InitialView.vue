@@ -178,7 +178,6 @@ const onSubmit = async () => {
       return message.error(resp.msg)
     }
   } catch (err) {
-    message.error(err.message)
     console.log(JSON.stringify(err))
   }
 }

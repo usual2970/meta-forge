@@ -6,10 +6,12 @@
  * If the layout we want to display is not found, loads the default layout App Layout Default.vue
  * */
 
-import request from '@/utils/request.js'
+import {get} from '@/api/systemsettings.js'
 
 export async function loadLayoutMiddleware(route) {
-    const resp= await request.get('/api/v1/systemsettings/get?key=schemas')
+    const resp= await get({
+        "key": "layout"
+    })
     console.log(resp)
     try {
         let layout = route.meta.layout

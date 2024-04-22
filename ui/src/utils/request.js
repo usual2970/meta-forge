@@ -6,6 +6,9 @@ import { message } from 'ant-design-vue';
 const instance = axios.create({
   baseURL: import.meta.env.VUE_APP_API_BASE_URL,
   timeout: 10000,
+  headers: {
+    'content-type': 'application/json;charset=UTF-8',
+  },
 });
 
 instance.interceptors.request.use(

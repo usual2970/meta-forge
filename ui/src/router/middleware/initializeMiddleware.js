@@ -8,8 +8,6 @@ export async function initializeMiddleware(to,_from) {
         await store.getSettings()
     }
     
-    
-
     // 如果未初始化，且不是initial页，跳转到initial页
     if (store.hasInitialized==-1 && to.name!="initial"){
         return {name:"initial"}

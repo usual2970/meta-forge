@@ -172,7 +172,7 @@ const onSubmit = async () => {
 
     const resp = await initialize(formState)
     if (resp.code == 0) {
-      message.info('Initialize success')
+      message.success('Initialize success', 2)
       return router.push('/')
     } else {
       return message.error(resp.msg)

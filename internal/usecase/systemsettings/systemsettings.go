@@ -20,6 +20,15 @@ func NewUsecase(repo domain.ISystemSettingsRepository) domain.ISystemSettingsUse
 	}
 }
 
+func (u *usecase) BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error) {
+	rs, err := u.repo.BatchGet(ctx, keys)
+	if err != nil {
+		return nil, err
+	}
+
+	return rs, nil
+}
+
 func (u *usecase) Get(ctx context.Context, key string) (interface{}, error) {
 	data, err := u.repo.Get(ctx, key)
 	if err != nil {

@@ -3,6 +3,8 @@ package systemsettings
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/models"
@@ -15,6 +17,34 @@ type SystemSettingsRepository struct {
 
 func NewRepository() domain.ISystemSettingsRepository {
 	return &SystemSettingsRepository{}
+}
+
+func (r *SystemSettingsRepository) BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error) {
+
+	filter := []string{}
+	for _, key := range keys {
+		filter = append(filter, fmt.Sprintf("uri = '%s'", key))
+	}
+
+	records, err := app.GetDao().FindRecordsByFilter("mf_system_settings", strings.Join(filter, " || "), "-created", 10, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	rs := make(map[string]interface{})
+
+	for _, record := range records {
+		var data map[string]interface{}
+		if err := record.UnmarshalJSONField("data", &data); err != nil {
+			continue
+		}
+		res, ok := data["value"]
+		if !ok {
+			continue
+		}
+		rs[record.GetString("uri")] = res
+	}
+	return rs, nil
 }
 
 func (r *SystemSettingsRepository) BatchSave(ctx context.Context, settings []domain.SystemSetting) error {

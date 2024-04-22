@@ -1,6 +1,8 @@
 package systemsettings
 
 import (
+	"strings"
+
 	"github.com/labstack/echo/v5"
 	"github.com/usual2970/meta-forge/internal/domain"
 	"github.com/usual2970/meta-forge/internal/util/resp"
@@ -34,10 +36,21 @@ func (c *controller) Get(ctx echo.Context) error {
 	return resp.Succ(ctx, value)
 }
 
+func (c *controller) BatchGet(ctx echo.Context) error {
+	keys := ctx.QueryParam("keys")
+	value, err := c.usecase.BatchGet(ctx.Request().Context(), strings.Split(keys, ","))
+	if err != nil {
+		return resp.Err(ctx, err)
+	}
+
+	return resp.Succ(ctx, value)
+}
+
 func Register(route *echo.Group, usecase domain.ISystemSettingsUsecase) {
 	c := &controller{
 		usecase: usecase,
 	}
 	route.POST("/systemsettings/initialize", c.Initail)
 	route.GET("/systemsettings/get", c.Get)
+	route.GET("/systemsettings/batch-get", c.BatchGet)
 }

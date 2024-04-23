@@ -2,19 +2,13 @@
   <a-layout id="mf-layout" class="font-mono">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
       <div class="p-4 text-center text-white font-extrabold text-xl">MetaForge</div>
-      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-        <a-menu-item key="1">
-          <user-outlined />
-          <span>nav 1</span>
-        </a-menu-item>
-        <a-menu-item key="2">
-          <video-camera-outlined />
-          <span>nav 2</span>
-        </a-menu-item>
-        <a-menu-item key="3">
-          <upload-outlined />
-          <span>nav 3</span>
-        </a-menu-item>
+      <a-menu
+        v-model:selectedKeys="selectedKeys"
+        theme="dark"
+        mode="inline"
+        :items="menuItems"
+        @click="onMenuClick"
+      >
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -36,15 +30,25 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import {
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined
-} from '@ant-design/icons-vue'
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
+import { useRouter } from 'vue-router'
+
+import { useSystemSettingsStore } from '@/stores/systemsettings'
 const selectedKeys = ref(['1'])
 const collapsed = ref(false)
+
+const store = useSystemSettingsStore()
+
+const menuItems = store.menuItems
+
+const router = useRouter()
+
+const onMenuClick = (e) => {
+  if (e.keyPath.length == 2 && e.keyPath[0] == 'entity') {
+    router.push('/' + e.keyPath[0] + '/' + e.keyPath[1])
+    return
+  }
+}
 </script>
 <style>
 #mf-layout {

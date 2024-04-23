@@ -137,7 +137,7 @@ func InitialDbMysql(ctx context.Context, req *domain.InitializeReq) (XDB, error)
 	}, nil
 }
 
-func (m *Mysql) GetSchemas() ([]TableSchema, error) {
+func (m *Mysql) GetSchemas() ([]domain.TableSchema, error) {
 
 	rows, err := m.DB().Query("SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_KEY, COLUMN_DEFAULT, EXTRA,ORDINAL_POSITION,CHARACTER_MAXIMUM_LENGTH,COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE()")
 	if err != nil {
@@ -200,16 +200,16 @@ func (m *Mysql) GetSchemas() ([]TableSchema, error) {
 		return mi.TableName
 	})
 
-	rs := make([]TableSchema, 0)
+	rs := make([]domain.TableSchema, 0)
 	for tableName, fields := range fieldsMap {
-		tableSchema := TableSchema{
+		tableSchema := domain.TableSchema{
 			Name: tableName,
 		}
 
 		sort.Sort(mysqlFields(fields))
 
 		for _, field := range fields {
-			tableSchema.Fields = append(tableSchema.Fields, TableSchemaField{
+			tableSchema.Fields = append(tableSchema.Fields, domain.TableSchemaField{
 				Name:        field.ColumnName,
 				Type:        field.getType(),
 				IsRequired:  field.isRequired(),

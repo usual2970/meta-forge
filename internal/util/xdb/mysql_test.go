@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/usual2970/meta-forge/internal/domain"
 )
 
 func MustDb() *sql.DB {
@@ -26,7 +27,7 @@ func TestMysql_GetSchemas(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []TableSchema
+		want    []domain.TableSchema
 		wantErr bool
 	}{
 		{

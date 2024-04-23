@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/spf13/cast"
 	"github.com/usual2970/meta-forge/internal/routes"
 	"github.com/usual2970/meta-forge/internal/util/app"
 	"github.com/usual2970/meta-forge/ui"
@@ -15,8 +13,6 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase/core"
-
-	systemsettings "github.com/usual2970/meta-forge/internal/repository/system_settings"
 
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
@@ -49,7 +45,6 @@ func main() {
 		e.Router.GET(
 			mfPath+"*",
 			echo.StaticDirectoryHandler(ui.DistDirFS, false),
-			installerRedirect(app),
 			middleware.Gzip(),
 		)
 
@@ -67,55 +62,4 @@ func main() {
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-const hasInitializedCacheKey = "@hasInitialized"
-
-func installerRedirect(app core.App) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			// skip redirect checks for non-root level index.html requests
-			path := c.Request().URL.Path
-			if path != mfPath && path != mfPath+"index.html" {
-				return next(c)
-			}
-
-			hasInitialized := cast.ToBool(app.Store().Get(hasInitializedCacheKey))
-
-			if !hasInitialized {
-				// update the cache to make sure that the admin wasn't created by another process
-				if err := updateHasInitializedCache(); err != nil {
-					return err
-				}
-				hasInitialized = cast.ToBool(app.Store().Get(hasInitializedCacheKey))
-			}
-
-			_, hasInitialParam := c.Request().URL.Query()["initial"]
-
-			if !hasInitialized && !hasInitialParam {
-				// redirect to the initialize page
-				return c.Redirect(http.StatusTemporaryRedirect, "?initial#/initial")
-			}
-
-			if hasInitialized && hasInitialParam {
-				// clear the initial param
-				return c.Redirect(http.StatusTemporaryRedirect, "?#/")
-			}
-
-			return next(c)
-		}
-	}
-}
-
-func updateHasInitializedCache() error {
-	repo := systemsettings.NewRepository()
-	rs, _ := repo.Get(context.Background(), hasInitializedCacheKey)
-
-	if rs == nil {
-		return nil
-	}
-
-	app.Get().Store().Set(hasInitializedCacheKey, cast.ToBool(rs))
-	return nil
-
 }

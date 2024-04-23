@@ -2,6 +2,7 @@ package systemsettings
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -12,14 +13,15 @@ import (
 	"github.com/usual2970/meta-forge/internal/util/app"
 )
 
-type SystemSettingsRepository struct {
+type repository struct {
 }
 
 func NewRepository() domain.ISystemSettingsRepository {
-	return &SystemSettingsRepository{}
+
+	return &repository{}
 }
 
-func (r *SystemSettingsRepository) BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error) {
+func (r *repository) BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error) {
 
 	filter := []string{}
 	for _, key := range keys {
@@ -47,7 +49,7 @@ func (r *SystemSettingsRepository) BatchGet(ctx context.Context, keys []string) 
 	return rs, nil
 }
 
-func (r *SystemSettingsRepository) BatchSave(ctx context.Context, settings []domain.SystemSetting) error {
+func (r *repository) BatchSave(ctx context.Context, settings []domain.SystemSetting) error {
 	collection, err := app.GetDao().FindCollectionByNameOrId("mf_system_settings")
 	if err != nil {
 		return err
@@ -74,7 +76,43 @@ func (r *SystemSettingsRepository) BatchSave(ctx context.Context, settings []dom
 
 }
 
-func (r *SystemSettingsRepository) Get(ctx context.Context, key string) (interface{}, error) {
+func (r *repository) GetSchemas(ctx context.Context) (map[string]domain.TableSchema, error) {
+	key := "schemas"
+	skey := "@" + key
+	data := app.Get().Store().Get(skey)
+	if data != nil {
+		return data.(map[string]domain.TableSchema), nil
+	}
+	schemas, err := r.Get(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+
+	bts, _ := json.Marshal(schemas)
+
+	rs := make([]domain.TableSchema, 0)
+
+	err = json.Unmarshal(bts, &rs)
+	if err != nil {
+		return nil, fmt.Errorf("invalid schemas:%w", err)
+	}
+
+	rsMap := make(map[string]domain.TableSchema)
+
+	for _, item := range rs {
+		rsMap[item.Name] = item
+	}
+
+	app.Get().Store().Set(skey, rsMap)
+
+	return rsMap, nil
+}
+
+func (r *repository) Get(ctx context.Context, key string) (interface{}, error) {
+	data := app.Get().Store().Get(key)
+	if data != nil {
+		return data, nil
+	}
 
 	record, err := app.GetDao().FindFirstRecordByFilter("mf_system_settings",
 		"uri='"+key+"'",
@@ -87,7 +125,9 @@ func (r *SystemSettingsRepository) Get(ctx context.Context, key string) (interfa
 		return nil, err
 	}
 	if res, ok := rs["value"]; ok {
+		app.Get().Store().Set(key, rs["value"])
 		return res, nil
 	}
+
 	return nil, errors.New("not found")
 }

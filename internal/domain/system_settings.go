@@ -1,11 +1,36 @@
 package domain
 
-import "context"
+import (
+	"context"
+)
 
 const (
 	DbKindMysql  = "mysql"
 	DbKindSqlite = "sqlite"
 )
+
+type TableSchema struct {
+	Name         string                `json:"name"`
+	Fields       []TableSchemaField    `json:"fields"`
+	Relations    []TableSchemaRelation `json:"relations"`
+	UniqueFields [][]string            `json:"uniqueFields"`
+}
+
+type TableSchemaRelation struct {
+	Name               string `json:"name"`
+	FieldName          string `json:"fieldName"`
+	ReferenceTable     string `json:"referenceTable"`
+	ReferenceFieldName string `json:"referenceFieldName"`
+}
+
+type TableSchemaField struct {
+	Name        string   `json:"name"`
+	IsRequired  bool     `json:"isRequired"`
+	IsId        bool     `json:"isId"`
+	Type        string   `json:"type"`
+	Enumeration []string `json:"enumeration"`
+	Length      int      `json:"length"`
+}
 
 type InitializeReq struct {
 	Kind     string `json:"kind"`
@@ -32,6 +57,7 @@ type SystemSetting struct {
 
 type ISystemSettingsRepository interface {
 	Get(ctx context.Context, key string) (interface{}, error)
+	GetSchemas(ctx context.Context) (map[string]TableSchema, error)
 	BatchSave(ctx context.Context, settings []SystemSetting) error
 	BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error)
 }

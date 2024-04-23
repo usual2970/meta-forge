@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"sync"
 
 	"github.com/usual2970/meta-forge/internal/domain"
 )
@@ -15,33 +16,25 @@ const (
 	FieldTypeEnum   = "enum"
 )
 
-type TableSchema struct {
-	Name         string                `json:"name"`
-	Fields       []TableSchemaField    `json:"fields"`
-	Relations    []TableSchemaRelation `json:"relations"`
-	UniqueFields [][]string            `json:"uniqueFields"`
-}
-
-type TableSchemaRelation struct {
-	Name               string `json:"name"`
-	FieldName          string `json:"fieldName"`
-	ReferenceTable     string `json:"referenceTable"`
-	ReferenceFieldName string `json:"referenceFieldName"`
-}
-
-type TableSchemaField struct {
-	Name        string   `json:"name"`
-	IsRequired  bool     `json:"isRequired"`
-	IsId        bool     `json:"isId"`
-	Type        string   `json:"type"`
-	Enumeration []string `json:"enumeration"`
-	Length      int      `json:"length"`
-}
-
 type XDB interface {
-	GetSchemas() ([]TableSchema, error)
+	GetSchemas() ([]domain.TableSchema, error)
 	DB() *sql.DB
 	Close() error
+}
+
+var xdb XDB
+var xdbOnce sync.Once
+
+func DB(ctx context.Context, req *domain.InitializeReq) XDB {
+	xdbOnce.Do(func() {
+		var err error
+		xdb, err = InitialDb(ctx, req)
+		if err != nil {
+			panic(err)
+		}
+
+	})
+	return xdb
 }
 
 func InitialDb(ctx context.Context, req *domain.InitializeReq) (XDB, error) {

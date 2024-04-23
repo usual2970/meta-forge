@@ -22,6 +22,26 @@ export const useSystemSettingsStore = defineStore("systemsettings", ()=>{
         return settings.value.schemas;
     });
 
+    const schemaMap=computed(()=>{
+        return schemas.value.reduce((acc, cur) => {
+            acc[cur.name] = cur;
+            return acc;
+        }, {});
+    });
+
+    const getSchemaColumns=(name)=>{
+       
+        return schemaMap.value[name].fields.map((item)=>{
+            return {
+                title:name2label(item.name),
+                key:item.name,
+                dataIndex:item.name,
+            }
+        })
+
+        
+    }
+
     const menuItems=computed(()=>{
 
         const entities=[];
@@ -74,6 +94,6 @@ export const useSystemSettingsStore = defineStore("systemsettings", ()=>{
     }
 
 
-    return {settings,getSettings,hasInitialized,schemas,menuItems}
+    return {settings,getSettings,hasInitialized,schemas,menuItems,schemaMap,getSchemaColumns}
 
 });

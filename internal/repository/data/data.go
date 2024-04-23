@@ -64,7 +64,7 @@ func (r *repository) List(ctx context.Context, req *domain.DataListReq) (*domain
 
 	sql := fmt.Sprintf("select %s from %s where %s order by %s limit %s",
 		buildSelect(schema),
-		req.Table,
+		buildFrom(req.Table),
 		buildWhere(req.Filter),
 		buildOrderBy(req.OrderBy),
 		buildLimit(req),
@@ -110,7 +110,7 @@ func (r *repository) List(ctx context.Context, req *domain.DataListReq) (*domain
 
 func (r *repository) count(ctx context.Context, req *domain.DataListReq) (int, error) {
 	sql := fmt.Sprintf("select count(*) from %s where %s",
-		req.Table,
+		buildFrom(req.Table),
 		buildWhere(req.Filter),
 	)
 
@@ -171,6 +171,10 @@ func fields(schema domain.TableSchema) map[string]domain.TableSchemaField {
 		fields[field.Name] = field
 	}
 	return fields
+}
+
+func buildFrom(table string) string {
+	return fmt.Sprintf("`%s`", table)
 }
 
 func buildOrderBy(orderBy string) string {

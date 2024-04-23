@@ -16,10 +16,7 @@ import (
 	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase/core"
 
-	"github.com/usual2970/meta-forge/internal/repository/secret"
 	systemsettings "github.com/usual2970/meta-forge/internal/repository/system_settings"
-	wecomRepository "github.com/usual2970/meta-forge/internal/repository/wecom"
-	"github.com/usual2970/meta-forge/internal/usecase/wecom"
 
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
@@ -65,16 +62,6 @@ func main() {
 		routes.Route(e.Router)
 
 		return nil
-	})
-
-	app.OnTerminate().Add(func(e *core.TerminateEvent) error {
-		routes.UnRegister()
-
-		secretRepo := secret.NewRepository()
-		wecomRepo := wecomRepository.NewRepository()
-		wc := wecom.NewUsecase(secretRepo, wecomRepo)
-
-		return wc.Exit()
 	})
 
 	if err := app.Start(); err != nil {

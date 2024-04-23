@@ -1,7 +1,7 @@
 <template>
   <a-layout id="mf-layout" class="font-mono">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-      <div class="p-4 text-center text-white font-extrabold text-xl">MetaForge</div>
+      <div class="p-4 text-center text-white font-extrabold text-xl">{{ logo }}</div>
       <a-menu
         v-model:selectedKeys="selectedKeys"
         theme="dark"
@@ -29,13 +29,17 @@
   </a-layout>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 const selectedKeys = ref(['1'])
 const collapsed = ref(false)
+
+const logo = computed(() => {
+  return collapsed.value ? 'MF' : 'MetaForge'
+})
 
 const store = useSystemSettingsStore()
 

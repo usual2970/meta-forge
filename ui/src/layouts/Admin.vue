@@ -23,7 +23,9 @@
       <a-layout-content
         :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
       >
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -48,6 +50,9 @@ const menuItems = store.menuItems
 const router = useRouter()
 
 const onMenuClick = (e) => {
+  if (e.keyPath.length == 1) {
+    router.push({ name: e.key })
+  }
   if (e.keyPath.length == 2 && e.keyPath[0] == 'entity') {
     router.push('/' + e.keyPath[0] + '/' + e.keyPath[1])
     return

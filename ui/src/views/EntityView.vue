@@ -1,8 +1,17 @@
 <template>
-  <a-breadcrumb class="">
-    <a-breadcrumb-item>工作表</a-breadcrumb-item>
-    <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
-  </a-breadcrumb>
+  <div class="flex justify-between">
+    <a-breadcrumb class="">
+      <a-breadcrumb-item>工作表</a-breadcrumb-item>
+      <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
+    </a-breadcrumb>
+
+    <div class="flex">
+      <a-button type="primary" @click="handleAdd" :icon="h(PlusOutlined)">新增</a-button>
+      <a-button type="default" @click="handleSave" class="ml-5" :icon="h(SettingOutlined)"
+        >设置</a-button
+      >
+    </div>
+  </div>
 
   <a-table
     :dataSource="dataSource"
@@ -16,11 +25,12 @@
 </template>
 
 <script setup>
-import { computed, ref, reactive, onMounted } from 'vue'
+import { computed, ref, reactive, onMounted, h } from 'vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { name2label } from '@/utils/helper'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { list } from '@/api/data'
+import { PlusOutlined, SettingOutlined } from '@ant-design/icons-vue'
 
 const store = useSystemSettingsStore()
 
@@ -92,4 +102,7 @@ const handleTableChange = (page, filters, sorter) => {
   sortedInfo.value = sorter
   getList(router.currentRoute.value.params.name)
 }
+
+const handleAdd = () => {}
+const handleSave = () => {}
 </script>

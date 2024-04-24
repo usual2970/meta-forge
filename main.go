@@ -42,6 +42,7 @@ func main() {
 				return c.Redirect(http.StatusTemporaryRedirect, strings.TrimLeft(mfPath, "/"))
 			},
 		)
+
 		e.Router.GET(
 			mfPath+"*",
 			echo.StaticDirectoryHandler(ui.DistDirFS, false),

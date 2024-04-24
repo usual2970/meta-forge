@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/usual2970/meta-forge/internal/domain"
 	systemsettings "github.com/usual2970/meta-forge/internal/repository/system_settings"
@@ -128,7 +127,7 @@ func toValue(bts []byte, field domain.TableSchemaField) interface{} {
 	}
 
 	switch field.Type {
-	case xdb.FieldTypeString, xdb.FieldTypeEnum:
+	case xdb.FieldTypeString, xdb.FieldTypeEnum, xdb.FieldTypeDate:
 		return string(bts)
 	case xdb.FieldTypeNumber:
 		f, err := strconv.ParseFloat(string(bts), 64)
@@ -136,12 +135,6 @@ func toValue(bts []byte, field domain.TableSchemaField) interface{} {
 			return nil
 		}
 		return f
-	case xdb.FieldTypeDate:
-		t, err := time.Parse("2006-01-02", string(bts))
-		if err != nil {
-			return nil
-		}
-		return t
 
 	default:
 		return string(bts)

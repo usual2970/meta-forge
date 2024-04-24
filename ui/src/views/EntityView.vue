@@ -4,11 +4,19 @@
     <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
   </a-breadcrumb>
 
-  <a-table :dataSource="dataSource" :columns="columns" class="my-5" />
+  <a-table
+    :dataSource="dataSource"
+    :columns="columns"
+    class="my-5"
+    size="middle"
+    :scroll="{ x: 1500, y: 800 }"
+    :pagination="pagination"
+    @change="handleTableChange"
+  />
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, reactive, onMounted } from 'vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { name2label } from '@/utils/helper'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
@@ -25,27 +33,63 @@ const labelName = computed(() => {
 const dataSource = ref([])
 
 const getList = async (table) => {
-  const resp = await list({
+  const req = {
     table: table,
-    page: 1,
-    pageSize: 1000
-  })
+    page: pagination.current,
+    pageSize: pagination.pageSize
+  }
+  let sorter = sortedInfo.value
+  if (sorter && sorter.order) {
+    let order = sorter.order === 'ascend' ? 'asc' : 'desc'
+
+    req.orderBy = `${sorter.field} ${order}`
+  }
+
+  const resp = await list(req)
 
   if (resp.code === 0) {
     dataSource.value = resp.data.data
+    pagination.total = resp.data.totalRecords
   }
 }
+
+onMounted(async () => {
+  console.log(router)
+  await getList(router.currentRoute.value.params.name)
+})
 
 onBeforeRouteUpdate((to, from) => {
   // 当路由参数变化时重新获取数据
   if (to.params.name !== from.params.name) {
+    sortedInfo.value = null
     getList(to.params.name)
   }
 })
 
-getList(router.currentRoute.value.params.name)
+const sortedInfo = ref()
 
 const columns = computed(() => {
-  return store.getSchemaColumns(router.currentRoute.value.params.name)
+  const sorted = sortedInfo.value || {}
+  return store.getSchemaColumns(router.currentRoute.value.params.name).map((column) => {
+    if (column.key === sorted.columnKey && sorted.order) {
+      column.sortOrder = sorted.order
+    } else {
+      column.sortOrder = null
+    }
+    return column
+  })
 })
+
+const pagination = reactive({
+  total: 0,
+  current: 1,
+  pageSize: 20
+})
+
+const handleTableChange = (page, filters, sorter) => {
+  pagination.current = page.current
+  pagination.pageSize = page.pageSize
+  sortedInfo.value = sorter
+  getList(router.currentRoute.value.params.name)
+}
 </script>

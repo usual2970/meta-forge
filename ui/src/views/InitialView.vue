@@ -61,6 +61,7 @@
 <script setup>
 import { reactive, computed, ref } from 'vue'
 import { initialize } from '@/api/systemsettings'
+import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 
@@ -166,6 +167,8 @@ const rules = {
 
 const router = useRouter()
 
+const store = useSystemSettingsStore()
+
 const onSubmit = async () => {
   try {
     await formRef.value.validate()
@@ -173,7 +176,8 @@ const onSubmit = async () => {
     const resp = await initialize(formState)
     if (resp.code == 0) {
       message.success('Initialize success', 2)
-      return router.push('/')
+      await store.getSettings()
+      return router.push({ name: 'home' })
     } else {
       return message.error(resp.msg)
     }

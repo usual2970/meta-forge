@@ -26,7 +26,7 @@ func NewRepository() domain.IDataRepository {
 	ctx := context.Background()
 	config, err := settingRepo.Get(ctx, "dbconfig")
 	if err != nil {
-		panic(err)
+		return nil
 	}
 
 	req := &domain.InitializeReq{}

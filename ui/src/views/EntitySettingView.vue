@@ -13,15 +13,15 @@
 
   <div class="mt-5 flex">
     <div>
-      <a-menu :items="menuItems" class="min-w-56 border rounded" />
+      <a-menu :items="menuItems" class="min-w-56 border rounded shadow-lg" />
     </div>
 
-    <a-card :title="labelName" :bordered="false" class="ml-5 grow">
-      <template #extra>
-        <a href="#">More</a>
-      </template>
-      <p>card content</p>
-    </a-card>
+    <div class="ml-5 grow border rounded flex flex-col">
+      <div class="flex border-b">
+        <div class="text-xl text-slate-700 p-3">{{ labelName }}</div>
+      </div>
+      <div class="flex-grow">content</div>
+    </div>
   </div>
 </template>
 

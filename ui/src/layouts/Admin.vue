@@ -1,7 +1,13 @@
 <template>
   <a-layout id="mf-layout" class="font-mono">
-    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
+    <a-layout-sider
+      v-model:collapsed="collapsed"
+      :trigger="null"
+      collapsible
+      class="overflow-y-scroll"
+    >
       <div class="p-4 text-center text-white font-extrabold text-xl">{{ logo }}</div>
+
       <a-menu
         v-model:selectedKeys="selectedKeys"
         theme="dark"

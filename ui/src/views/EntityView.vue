@@ -13,16 +13,17 @@
       <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
     </a-breadcrumb>
   </div>
-
-  <a-table
-    :dataSource="dataSource"
-    :columns="columns"
-    class="my-5"
-    size="middle"
-    :scroll="{ x: 1500, y: 800 }"
-    :pagination="pagination"
-    @change="handleTableChange"
-  />
+  <a-affix :offset-top="0">
+    <a-table
+      :dataSource="dataSource"
+      :columns="columns"
+      class="my-5"
+      size="middle"
+      :scroll="{ x: 1500, y: 800 }"
+      :pagination="pagination"
+      @change="handleTableChange"
+    ></a-table>
+  </a-affix>
 </template>
 
 <script setup>

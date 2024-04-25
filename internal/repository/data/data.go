@@ -61,7 +61,7 @@ func (r *repository) List(ctx context.Context, req *domain.DataListReq) (*domain
 
 	fields := fields(schema)
 
-	sql := fmt.Sprintf("select %s from %s where %s order by %s limit %s",
+	sql := fmt.Sprintf("select %s from %s where %s %s %s",
 		buildSelect(schema),
 		buildFrom(req.Table),
 		buildWhere(req.Filter),
@@ -172,9 +172,9 @@ func buildFrom(table string) string {
 
 func buildOrderBy(orderBy string) string {
 	if orderBy == "" {
-		return "id asc"
+		return ""
 	}
-	return orderBy
+	return fmt.Sprintf("ORDER BY %s", orderBy)
 }
 
 func buildWhere(filter string) string {
@@ -191,7 +191,7 @@ func buildLimit(req *domain.DataListReq) string {
 	pageSize := pageSize(req)
 	offset := (page - 1) * pageSize
 
-	return fmt.Sprintf("%d, %d", offset, pageSize)
+	return fmt.Sprintf("LIMIT %d, %d", offset, pageSize)
 }
 
 func buildSelect(schema domain.TableSchema) string {

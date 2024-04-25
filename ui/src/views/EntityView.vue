@@ -1,16 +1,17 @@
 <template>
   <div class="flex justify-between">
-    <a-breadcrumb class="">
-      <a-breadcrumb-item>工作表</a-breadcrumb-item>
-      <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
-    </a-breadcrumb>
-
+    <div class="text-2xl text-slate-700">{{ labelName }}</div>
     <div class="flex">
       <a-button type="primary" @click="handleAdd" :icon="h(PlusOutlined)">新增</a-button>
-      <a-button type="default" @click="handleSave" class="ml-5" :icon="h(SettingOutlined)"
+      <a-button type="default" @click="handleSetting" class="ml-5" :icon="h(SettingOutlined)"
         >设置</a-button
       >
     </div>
+  </div>
+  <div class="flex justify-between mt-2">
+    <a-breadcrumb class="">
+      <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
+    </a-breadcrumb>
   </div>
 
   <a-table
@@ -104,5 +105,13 @@ const handleTableChange = (page, filters, sorter) => {
 }
 
 const handleAdd = () => {}
-const handleSave = () => {}
+const handleSetting = () => {
+  router.push({
+    name: 'entity-setting',
+    params: {
+      name: router.currentRoute.value.params.name,
+      type: 'crud'
+    }
+  })
+}
 </script>

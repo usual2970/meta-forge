@@ -12,13 +12,12 @@
   </div>
 
   <div class="mt-5 flex">
-    <div>
-      <a-menu
-        :items="menuItems"
-        class="min-w-56 border rounded shadow-lg"
-        v-model:selectedKeys="selectedKeys"
-      />
-    </div>
+    <a-menu
+      :items="menuItems"
+      class="min-w-56 border rounded shadow-lg"
+      v-model:selectedKeys="selectedKeys"
+      @click="onMenuClick"
+    />
 
     <div class="ml-5 grow border rounded flex flex-col">
       <div class="flex border-b">
@@ -40,7 +39,8 @@ const router = useRouter()
 const labels = {
   crud: '增删改查',
   dict: '字典',
-  field: '字段'
+  field: '字段',
+  relation: '关联'
 }
 
 const labelName = computed(() => {
@@ -67,51 +67,34 @@ const menuItems = [
   { type: 'divider' },
   {
     label: '字典',
-    key: 'field',
-    icon: 'SettingOutlined',
-    path: `/entity/${router.currentRoute.value.params.name}/setting/field`
+    key: 'dict',
+    icon: () => h(SettingOutlined),
+    path: `/entity/${router.currentRoute.value.params.name}/setting/dict`
   },
   { type: 'divider' },
   {
     label: '字段',
     key: 'field',
-    icon: 'SettingOutlined',
+    icon: () => h(SettingOutlined),
     path: `/entity/${router.currentRoute.value.params.name}/setting/field`
   },
   { type: 'divider' },
   {
     label: '关联',
-    key: 'field',
-    icon: 'SettingOutlined',
-    path: `/entity/${router.currentRoute.value.params.name}/setting/field`
-  },
-  { type: 'divider' },
-  {
-    label: '关联',
-    key: 'field',
-    icon: 'SettingOutlined',
-    path: `/entity/${router.currentRoute.value.params.name}/setting/field`
-  },
-  { type: 'divider' },
-  {
-    label: '关联',
-    key: 'field',
-    icon: 'SettingOutlined',
-    path: `/entity/${router.currentRoute.value.params.name}/setting/field`
-  },
-  { type: 'divider' },
-  {
-    label: '关联',
-    key: 'field',
-    icon: 'SettingOutlined',
-    path: `/entity/${router.currentRoute.value.params.name}/setting/field`
-  },
-  { type: 'divider' },
-  {
-    label: '关联',
-    key: 'field',
-    icon: 'SettingOutlined',
-    path: `/entity/${router.currentRoute.value.params.name}/setting/field`
+    key: 'relation',
+    icon: () => h(SettingOutlined),
+    path: `/entity/${router.currentRoute.value.params.name}/setting/relation`
   }
 ]
+
+const onMenuClick = (e) => {
+  console.log(e)
+  router.push({
+    name: 'entity-setting',
+    params: {
+      name: router.currentRoute.value.params.name,
+      type: e.key
+    }
+  })
+}
 </script>

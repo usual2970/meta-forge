@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-between">
-    <div class="text-2xl text-slate-700">{{ labelName }}</div>
+    <div class="text-2xl text-slate-700">{{ dict.plural }}</div>
     <div class="flex">
       <a-button type="primary" @click="handleAdd" :icon="h(PlusOutlined)">新增</a-button>
       <a-button type="default" @click="handleSetting" class="ml-5" :icon="h(SettingOutlined)"
@@ -10,7 +10,7 @@
   </div>
   <div class="flex justify-between mt-2">
     <a-breadcrumb class="">
-      <a-breadcrumb-item>{{ labelName }}</a-breadcrumb-item>
+      <a-breadcrumb-item>{{ dict.plural }}</a-breadcrumb-item>
     </a-breadcrumb>
   </div>
   <a-affix :offset-top="0">
@@ -29,18 +29,34 @@
 <script setup>
 import { computed, ref, reactive, onMounted, h } from 'vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
-import { name2label } from '@/utils/helper'
+
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { list } from '@/api/data'
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import { batchGet } from '@/api/systemsettings'
+import { name2label } from '@/utils/helper'
+
+const dict = ref({})
+
+const initDict = async (name) => {
+  const dictKey = `${name}_dict`
+  const res = await batchGet({
+    keys: dictKey
+  })
+  const dictData = res.data[dictKey]
+  if (!dictData) {
+    dict.value = {
+      plural: name2label(name),
+      singular: name2label(name)
+    }
+  } else {
+    dict.value = dictData
+  }
+}
 
 const store = useSystemSettingsStore()
 
 const router = useRouter()
-
-const labelName = computed(() => {
-  return name2label(router.currentRoute.value.params.name)
-})
 
 const dataSource = ref([])
 
@@ -68,13 +84,15 @@ const getList = async (table) => {
 onMounted(async () => {
   console.log(router)
   await getList(router.currentRoute.value.params.name)
+  await initDict(router.currentRoute.value.params.name)
 })
 
-onBeforeRouteUpdate((to, from) => {
+onBeforeRouteUpdate(async (to, from) => {
   // 当路由参数变化时重新获取数据
   if (to.params.name !== from.params.name) {
     sortedInfo.value = null
-    getList(to.params.name)
+    await getList(to.params.name)
+    await initDict(to.params.name)
   }
 })
 

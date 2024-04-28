@@ -20,20 +20,55 @@
     />
 
     <div class="ml-5 grow border rounded flex flex-col">
-      <div class="flex border-b">
+      <div class="flex border-b justify-between items-center">
         <div class="text-xl text-slate-700 p-3">{{ labelName }}</div>
+        <a-button :icon="h(QuestionCircleOutlined)" type="link" v-if="selectedKeys[0] == 'dict'"
+          >解释字典设置</a-button
+        >
       </div>
-      <div class="flex-grow">content</div>
+      <div class="flex-grow">
+        <!-- 字典设置 -->
+        <div class="pt-7" v-if="selectedKeys[0] === 'dict'">
+          <a-form
+            :model="dictFormData"
+            :label-col="{ span: 3 }"
+            :wrapper-col="{ span: 18 }"
+            :rules="dictRules"
+            ref="dictFormRef"
+          >
+            <a-form-item label="复数" name="plural">
+              <a-input v-model:value="dictFormData.plural" type="text" />
+            </a-form-item>
+            <a-form-item label="单数" name="singular">
+              <a-input v-model:value="dictFormData.singular" type="text" />
+            </a-form-item>
+            <a-form-item :wrapper-col="{ offset: 19 }">
+              <a-button
+                type="primary"
+                html-type="submit"
+                size="large"
+                class="bg-blue-500"
+                @click="onDictSubmit"
+                :icon="h(SaveOutlined)"
+                >保存</a-button
+              >
+            </a-form-item>
+          </a-form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { computed, h, ref } from 'vue'
-import { name2label } from '@/utils/helper'
-import { SettingOutlined } from '@ant-design/icons-vue'
+import { computed, h, onMounted, ref } from 'vue'
+import { name2label, deepCopy } from '@/utils/helper'
+import { SettingOutlined, QuestionCircleOutlined, SaveOutlined } from '@ant-design/icons-vue'
+import { useSystemSettingsStore } from '@/stores/systemsettings'
+import { message } from 'ant-design-vue'
 
+const store = useSystemSettingsStore()
 const router = useRouter()
 
 const labels = {
@@ -48,7 +83,7 @@ const labelName = computed(() => {
 })
 
 const parentName = computed(() => {
-  return name2label(router.currentRoute.value.params.name)
+  return store.getLabel(router.currentRoute.value.params.name)
 })
 
 const backLink = computed(() => {
@@ -56,6 +91,13 @@ const backLink = computed(() => {
 })
 
 const selectedKeys = ref(['crud'])
+
+onMounted(async () => {
+  selectedKeys.value = [router.currentRoute.value.params.type]
+  let dictKey = `${router.currentRoute.value.params.name}_dict`
+
+  dictFormData.value = deepCopy(store.dict[dictKey])
+})
 
 const menuItems = [
   {
@@ -87,8 +129,35 @@ const menuItems = [
   }
 ]
 
+const dictFormRef = ref()
+
+const dictFormData = ref({
+  plural: '',
+  singular: ''
+})
+
+const dictRules = {
+  plural: [{ required: true, message: '请输入复数名称', trigger: ['change', 'blur'] }],
+  singular: [{ required: true, message: '请输入单数名称', trigger: ['change', 'blur'] }]
+}
+
+const onDictSubmit = async () => {
+  try {
+    await dictFormRef.value.validate()
+
+    await store.saveDict({
+      uri: `${router.currentRoute.value.params.name}_dict`,
+      data: deepCopy(dictFormData.value),
+      type: 'dict'
+    })
+
+    message.success('保存成功')
+  } catch (err) {
+    console.log(JSON.stringify(err))
+  }
+}
+
 const onMenuClick = (e) => {
-  console.log(e)
   router.push({
     name: 'entity-setting',
     params: {

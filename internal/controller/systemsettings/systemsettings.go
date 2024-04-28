@@ -26,6 +26,19 @@ func (c *controller) Initail(ctx echo.Context) error {
 
 }
 
+func (c *controller) Save(ctx echo.Context) error {
+	param := &domain.SystemSettingSaveReq{}
+	if err := ctx.Bind(param); err != nil {
+		return resp.Err(ctx, err)
+	}
+
+	if err := c.usecase.Save(ctx.Request().Context(), param); err != nil {
+		return resp.Err(ctx, err)
+	}
+
+	return resp.Succ(ctx, nil)
+}
+
 func (c *controller) Get(ctx echo.Context) error {
 	key := ctx.QueryParam("key")
 	value, err := c.usecase.Get(ctx.Request().Context(), key)
@@ -46,6 +59,18 @@ func (c *controller) BatchGet(ctx echo.Context) error {
 	return resp.Succ(ctx, value)
 }
 
+func (c *controller) GetByType(ctx echo.Context) error {
+	req := &domain.SystemSettingGetByTypeReq{}
+	if err := ctx.Bind(req); err != nil {
+		return resp.Err(ctx, err)
+	}
+	value, err := c.usecase.GetByType(ctx.Request().Context(), req)
+	if err != nil {
+		return resp.Err(ctx, err)
+	}
+	return resp.Succ(ctx, value)
+}
+
 func Register(route *echo.Group, usecase domain.ISystemSettingsUsecase) {
 	c := &controller{
 		usecase: usecase,
@@ -53,4 +78,7 @@ func Register(route *echo.Group, usecase domain.ISystemSettingsUsecase) {
 	route.POST("/systemsettings/initialize", c.Initail)
 	route.GET("/systemsettings/get", c.Get)
 	route.GET("/systemsettings/batch-get", c.BatchGet)
+
+	route.POST("/systemsettings/save", c.Save)
+	route.GET("/systemsettings/get-by-type", c.GetByType)
 }

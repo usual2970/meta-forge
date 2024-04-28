@@ -20,6 +20,10 @@ func NewUsecase(repo domain.ISystemSettingsRepository) domain.ISystemSettingsUse
 	}
 }
 
+func (u *usecase) GetByType(ctx context.Context, req *domain.SystemSettingGetByTypeReq) (map[string]interface{}, error) {
+	return u.repo.GetByType(ctx, req.Type)
+}
+
 func (u *usecase) BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error) {
 	rs, err := u.repo.BatchGet(ctx, keys)
 	if err != nil {
@@ -36,6 +40,11 @@ func (u *usecase) Get(ctx context.Context, key string) (interface{}, error) {
 	}
 	return data, nil
 }
+
+func (u *usecase) Save(ctx context.Context, req *domain.SystemSettingSaveReq) error {
+	return u.repo.Save(ctx, req)
+}
+
 func (u *usecase) Initialize(ctx context.Context, req *domain.InitializeReq) error {
 
 	// 先连接数据库

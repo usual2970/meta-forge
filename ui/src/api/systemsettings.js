@@ -26,3 +26,19 @@ export const initialize = (data) => {
         data
     })
 }
+
+export const save=(data) => {
+    return service({
+        url: "/api/v1/systemsettings/save",
+        method: 'post',
+        data
+    })
+}
+
+export const getByType=(data) => {
+    return service({
+        url: "/api/v1/systemsettings/get-by-type",
+        method: 'get',
+        params: data
+    })
+}

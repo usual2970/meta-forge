@@ -5,3 +5,7 @@ export const name2label= (name) => {
     label=label.replace(/( |^)[a-z]/g, L => L.toUpperCase());
     return label;
 }
+
+export const deepCopy = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+}

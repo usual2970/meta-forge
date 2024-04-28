@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import {computed, ref,h} from "vue";
-import {batchGet} from '@/api/systemsettings'
+import {batchGet,getByType,save} from '@/api/systemsettings'
 import {
     HomeOutlined,
     FileOutlined
@@ -15,6 +15,8 @@ export const useSystemSettingsStore = defineStore("systemsettings", ()=>{
         schemas:{},
     });
 
+    const dict=ref({})
+
     const hasInitialized=computed(()=>{
         return settings.value["@hasInitialized"];
     });
@@ -28,6 +30,8 @@ export const useSystemSettingsStore = defineStore("systemsettings", ()=>{
             return acc;
         }, {});
     });
+
+ 
 
     const getSchemaColumns=(name)=>{
        
@@ -63,9 +67,16 @@ export const useSystemSettingsStore = defineStore("systemsettings", ()=>{
         const entities=[];
 
         for(const entity of settings.value.schemas){
+
+            let label=name2label(entity.name)
+            let dictKey=`${entity.name}_dict`
+            if(dict.value[dictKey]){
+                label=dict.value[dictKey]['plural']
+            }
+            
             entities.push({
                 key:entity.name,
-                label:name2label(entity.name),
+                label:label,
                 title:entity.name,
                 
             });
@@ -105,11 +116,32 @@ export const useSystemSettingsStore = defineStore("systemsettings", ()=>{
             settings.value.schemas=!resp.data.schemas?{}:resp.data.schemas;
         }
 
-        
+        if (settings.value['@hasInitialized']==1){
+            const dictData=await getByType({type:'dict'})
+            if (resp.code==0){
+                dict.value=dictData.data
+            }
+        }
+    
         return settings.value;
     }
 
+    const saveDict=async (data) => {
+        const resp=await save(data)
+        if (resp.code==0){
+            dict.value[data.uri]=data.data
+        }
+    }
 
-    return {settings,getSettings,hasInitialized,schemas,menuItems,schemaMap,getSchemaColumns}
+    const getLabel=(name)=>{
+        const labelKey=`${name}_dict`
+        const data=dict.value[labelKey]
+        if (data){
+            return data.plural
+        }
+        return name2label(name)
+    }
+
+    return {settings,getSettings,hasInitialized,schemas,menuItems,schemaMap,getSchemaColumns,saveDict,dict,getLabel}
 
 });

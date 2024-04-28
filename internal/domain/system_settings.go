@@ -42,10 +42,22 @@ type InitializeReq struct {
 	Database string `json:"database"`
 }
 
+type SystemSettingSaveReq struct {
+	Uri  string      `json:"uri"`
+	Type string      `json:"type"`
+	Data interface{} `json:"data"`
+}
+
+type SystemSettingGetByTypeReq struct {
+	Type string `json:"type" query:"type"`
+}
+
 type ISystemSettingsUsecase interface {
 	Get(ctx context.Context, key string) (interface{}, error)
 	Initialize(ctx context.Context, req *InitializeReq) error
 	BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error)
+	Save(ctx context.Context, req *SystemSettingSaveReq) error
+	GetByType(ctx context.Context, req *SystemSettingGetByTypeReq) (map[string]interface{}, error)
 }
 
 type SystemSetting struct {
@@ -60,4 +72,7 @@ type ISystemSettingsRepository interface {
 	GetSchemas(ctx context.Context) (map[string]TableSchema, error)
 	BatchSave(ctx context.Context, settings []SystemSetting) error
 	BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error)
+
+	Save(ctx context.Context, req *SystemSettingSaveReq) error
+	GetByType(ctx context.Context, t string) (map[string]interface{}, error)
 }

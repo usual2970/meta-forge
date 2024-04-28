@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pocketbase/pocketbase/daos"
+	"github.com/pocketbase/pocketbase/forms"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/usual2970/meta-forge/internal/domain"
 	"github.com/usual2970/meta-forge/internal/util/app"
@@ -19,6 +20,28 @@ type repository struct {
 func NewRepository() domain.ISystemSettingsRepository {
 
 	return &repository{}
+}
+
+func (r *repository) GetByType(ctx context.Context, t string) (map[string]interface{}, error) {
+	records, err := app.GetDao().FindRecordsByFilter("mf_system_settings", "type='"+t+"'", "-created", 1000, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	rs := make(map[string]interface{})
+
+	for _, record := range records {
+		var data map[string]interface{}
+		if err := record.UnmarshalJSONField("data", &data); err != nil {
+			continue
+		}
+		res, ok := data["value"]
+		if !ok {
+			continue
+		}
+		rs[record.GetString("uri")] = res
+	}
+	return rs, nil
 }
 
 func (r *repository) BatchGet(ctx context.Context, keys []string) (map[string]interface{}, error) {
@@ -74,6 +97,38 @@ func (r *repository) BatchSave(ctx context.Context, settings []domain.SystemSett
 	}
 	return nil
 
+}
+
+func (r *repository) Save(ctx context.Context, req *domain.SystemSettingSaveReq) error {
+
+	collection, err := app.GetDao().FindCollectionByNameOrId("mf_system_settings")
+	if err != nil {
+		return err
+	}
+	record, err := app.GetDao().FindFirstRecordByFilter("mf_system_settings", "uri='"+req.Uri+"'")
+	if err != nil {
+		record = models.NewRecord(collection)
+	}
+
+	form := forms.NewRecordUpsert(app.Get(), record)
+
+	form.LoadData(
+		map[string]any{
+			"id":  record.Id,
+			"uri": req.Uri,
+			"data": map[string]interface{}{
+				"value": req.Data,
+			},
+			"type": req.Type,
+		},
+	)
+
+	if err := form.Submit(); err != nil {
+		return err
+	}
+
+	app.Get().Store().Remove(req.Uri)
+	return nil
 }
 
 func (r *repository) GetSchemas(ctx context.Context) (map[string]domain.TableSchema, error) {

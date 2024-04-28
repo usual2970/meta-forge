@@ -29,11 +29,7 @@
       <a-layout-content
         :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
       >
-        <router-view v-slot="{ Component }">
-          <keep-alive>
-            <component :is="Component" />
-          </keep-alive>
-        </router-view>
+        <router-view></router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -53,7 +49,9 @@ const logo = computed(() => {
 
 const store = useSystemSettingsStore()
 
-const menuItems = store.menuItems
+const menuItems = computed(() => {
+  return store.menuItems
+})
 
 const router = useRouter()
 

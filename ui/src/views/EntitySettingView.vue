@@ -29,7 +29,7 @@
       <div class="flex-grow">
         <!-- 字典设置 -->
         <div class="pt-7" v-if="selectedKeys[0] === 'dict'">
-          <EntityDictSetting :formData="dictFormData" />
+          <EntityDictSetting />
         </div>
       </div>
     </div>
@@ -39,8 +39,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { computed, h, onMounted, ref } from 'vue'
-import { name2label, deepCopy } from '@/utils/helper'
-import { SettingOutlined, QuestionCircleOutlined, SaveOutlined } from '@ant-design/icons-vue'
+import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import EntityDictSetting from '@/components/EntityDictSetting.vue'
 
@@ -70,9 +69,6 @@ const selectedKeys = ref(['crud'])
 
 onMounted(async () => {
   selectedKeys.value = [router.currentRoute.value.params.type]
-  let dictKey = `${router.currentRoute.value.params.name}_dict`
-
-  dictFormData.value = deepCopy(store.dict[dictKey])
 })
 
 const menuItems = [
@@ -104,11 +100,6 @@ const menuItems = [
     path: `/entity/${router.currentRoute.value.params.name}/setting/relation`
   }
 ]
-
-const dictFormData = ref({
-  plural: '',
-  singular: ''
-})
 
 const onMenuClick = (e) => {
   router.push({

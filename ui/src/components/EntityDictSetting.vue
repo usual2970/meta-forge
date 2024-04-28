@@ -26,22 +26,16 @@
   </a-form>
 </template>
 <script setup>
-import { reactive, h, ref } from 'vue'
+import { h, ref, onMounted } from 'vue'
 import { SaveOutlined } from '@ant-design/icons-vue'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { deepCopy } from '@/utils/helper'
-const props = defineProps({
-  formData: {
-    type: Object,
-    default: () => ({})
-  }
-})
 
 const store = useSystemSettingsStore()
 const router = useRouter()
-const dictFormData = ref({ ...props.formData })
+const dictFormData = ref({})
 
 const dictFormRef = ref()
 
@@ -49,6 +43,12 @@ const dictRules = {
   plural: [{ required: true, message: '请输入复数名称', trigger: ['change', 'blur'] }],
   singular: [{ required: true, message: '请输入单数名称', trigger: ['change', 'blur'] }]
 }
+
+onMounted(() => {
+  let dictKey = `${router.currentRoute.value.params.name}_dict`
+
+  dictFormData.value = deepCopy(store.dict[dictKey])
+})
 
 const onDictSubmit = async () => {
   try {

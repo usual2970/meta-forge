@@ -25,12 +25,16 @@
         <a-button :icon="h(QuestionCircleOutlined)" type="link" v-if="selectedKeys[0] == 'dict'"
           >解释字典设置</a-button
         >
+
+        <a-button :icon="h(QuestionCircleOutlined)" type="link" v-if="selectedKeys[0] == 'field'"
+          >解释字段设置</a-button
+        >
       </div>
       <div class="flex-grow">
         <!-- 字典设置 -->
-        <div class="pt-7" v-if="selectedKeys[0] === 'dict'">
-          <EntityDictSetting />
-        </div>
+        <EntityDictSetting v-if="selectedKeys[0] === 'dict'" />
+        <!-- 字段设置 -->
+        <EntityFieldSetting v-if="selectedKeys[0] === 'field'" />
       </div>
     </div>
   </div>
@@ -42,6 +46,7 @@ import { computed, h, onMounted, ref } from 'vue'
 import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import EntityDictSetting from '@/components/EntityDictSetting.vue'
+import EntityFieldSetting from '@/components/EntityFieldSetting.vue'
 
 const store = useSystemSettingsStore()
 const router = useRouter()

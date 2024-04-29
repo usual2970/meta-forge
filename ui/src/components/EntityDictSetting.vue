@@ -1,29 +1,31 @@
 <template>
-  <a-form
-    :model="dictFormData"
-    :label-col="{ span: 3 }"
-    :wrapper-col="{ span: 18 }"
-    :rules="dictRules"
-    ref="dictFormRef"
-  >
-    <a-form-item label="复数" name="plural">
-      <a-input v-model:value="dictFormData.plural" type="text" />
-    </a-form-item>
-    <a-form-item label="单数" name="singular">
-      <a-input v-model:value="dictFormData.singular" type="text" />
-    </a-form-item>
-    <a-form-item :wrapper-col="{ offset: 19 }">
-      <a-button
-        type="primary"
-        html-type="submit"
-        size="large"
-        class="bg-blue-500"
-        @click="onDictSubmit"
-        :icon="h(SaveOutlined)"
-        >保存</a-button
-      >
-    </a-form-item>
-  </a-form>
+  <div class="pt-7">
+    <a-form
+      :model="dictFormData"
+      :label-col="{ span: 3 }"
+      :wrapper-col="{ span: 18 }"
+      :rules="dictRules"
+      ref="dictFormRef"
+    >
+      <a-form-item label="复数" name="plural">
+        <a-input v-model:value="dictFormData.plural" type="text" />
+      </a-form-item>
+      <a-form-item label="单数" name="singular">
+        <a-input v-model:value="dictFormData.singular" type="text" />
+      </a-form-item>
+      <a-form-item :wrapper-col="{ offset: 19 }">
+        <a-button
+          type="primary"
+          html-type="submit"
+          size="large"
+          class="bg-blue-500"
+          @click="onDictSubmit"
+          :icon="h(SaveOutlined)"
+          >保存</a-button
+        >
+      </a-form-item>
+    </a-form>
+  </div>
 </template>
 <script setup>
 import { h, ref, onMounted } from 'vue'
@@ -47,7 +49,7 @@ const dictRules = {
 onMounted(() => {
   let dictKey = `${router.currentRoute.value.params.name}_dict`
 
-  dictFormData.value = deepCopy(store.dict[dictKey])
+  dictFormData.value = deepCopy(store.dict[dictKey] ? store.dict[dictKey] : {})
 })
 
 const onDictSubmit = async () => {

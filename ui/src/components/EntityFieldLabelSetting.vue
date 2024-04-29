@@ -6,14 +6,8 @@
     ref="formRef"
     :rules="rules"
   >
-    <a-form-item
-      v-for="(item, index) in formData"
-      :key="index"
-      :label="index"
-      :name="index"
-      :rules="[{ required: true, message: '请输入' }]"
-    >
-      <a-input v-model:value="formData[index]" />
+    <a-form-item v-for="(item, index) in formData" :key="index" :label="index" :name="index">
+      <a-input v-model:value="formData[index]" type="text" />
     </a-form-item>
     <a-form-item :wrapper-col="{ offset: 19 }">
       <a-button
@@ -80,7 +74,7 @@ const initRules = () => {
   rules.value = schema.fields.reduce((pre, item) => {
     pre[item.name] = [
       {
-        required: true,
+        required: false,
         message: '请输入标签',
         trigger: ['change', 'blur']
       }

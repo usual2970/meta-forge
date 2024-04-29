@@ -55,6 +55,6 @@ func Test_usecase_Initialize(t *testing.T) {
 			if err := u.Initialize(tt.args.ctx, tt.args.req); (err != nil) != tt.wantErr {
 				t.Errorf("usecase.Initialize() error = %v, wantErr %v", err, tt.wantErr)
 			}
-		})
+
 	}
 }

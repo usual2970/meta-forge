@@ -33,7 +33,7 @@ import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { list } from '@/api/data'
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons-vue'
-import { batchGet } from '@/api/systemsettings'
+import { batchGet, get } from '@/api/systemsettings'
 import { name2label } from '@/utils/helper'
 
 const dict = ref({})
@@ -85,6 +85,7 @@ onMounted(async () => {
   console.log(router)
   await getList(router.currentRoute.value.params.name)
   await initDict(router.currentRoute.value.params.name)
+  await initFieldLabels(router.currentRoute.value.params.name)
 })
 
 onBeforeRouteUpdate(async (to, from) => {
@@ -93,10 +94,22 @@ onBeforeRouteUpdate(async (to, from) => {
     sortedInfo.value = null
     await getList(to.params.name)
     await initDict(to.params.name)
+    await initFieldLabels(to.params.name)
   }
 })
 
 const sortedInfo = ref()
+
+const fieldLabels = ref({})
+
+const initFieldLabels = async () => {
+  const res = await get({
+    key: `${router.currentRoute.value.params.name}_field_label`
+  })
+  if (res.code == 0) {
+    fieldLabels.value = res.data
+  }
+}
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {}
@@ -105,6 +118,9 @@ const columns = computed(() => {
       column.sortOrder = sorted.order
     } else {
       column.sortOrder = null
+    }
+    if (fieldLabels.value[column.key]) {
+      column.title = fieldLabels.value[column.key]
     }
     return column
   })

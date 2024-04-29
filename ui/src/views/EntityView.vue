@@ -102,9 +102,9 @@ const sortedInfo = ref()
 
 const fieldLabels = ref({})
 
-const initFieldLabels = async () => {
+const initFieldLabels = async (name) => {
   const res = await get({
-    key: `${router.currentRoute.value.params.name}_field_label`
+    key: `${name}_field_label`
   })
   if (res.code == 0) {
     fieldLabels.value = res.data

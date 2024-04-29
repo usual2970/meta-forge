@@ -22,7 +22,21 @@
       :scroll="{ x: 1500, y: 800 }"
       :pagination="pagination"
       @change="handleTableChange"
-    ></a-table>
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <span>
+            <a><EyeOutlined /></a>
+            <a-divider type="vertical" />
+            <a>
+              <FormOutlined />
+            </a>
+            <a-divider type="vertical" />
+            <a><DeleteOutlined /></a>
+          </span>
+        </template>
+      </template>
+    </a-table>
   </a-affix>
 </template>
 
@@ -32,7 +46,13 @@ import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { list } from '@/api/data'
-import { PlusOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import {
+  PlusOutlined,
+  SettingOutlined,
+  EyeOutlined,
+  DeleteOutlined,
+  FormOutlined
+} from '@ant-design/icons-vue'
 import { batchGet, get } from '@/api/systemsettings'
 import { name2label } from '@/utils/helper'
 
@@ -113,7 +133,7 @@ const initFieldLabels = async (name) => {
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {}
-  return store.getSchemaColumns(router.currentRoute.value.params.name).map((column) => {
+  const rs = store.getSchemaColumns(router.currentRoute.value.params.name).map((column) => {
     if (column.key === sorted.columnKey && sorted.order) {
       column.sortOrder = sorted.order
     } else {
@@ -124,6 +144,17 @@ const columns = computed(() => {
     }
     return column
   })
+
+  rs.push({
+    title: '操作',
+    dataIndex: 'action',
+    key: 'action',
+    fixed: 'right',
+    width: 120,
+    scopedSlots: { customRender: 'operation' }
+  })
+
+  return rs
 })
 
 const pagination = reactive({

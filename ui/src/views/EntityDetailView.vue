@@ -19,7 +19,7 @@
           <a-form-item
             :label="fieldLabels[index] ? fieldLabels[index] : index"
             :label-col="{ span: 5 }"
-            :wrapper-col="{ span: 19 }"
+            :wrapper-col="{ span: 18 }"
           >
             <a-input v-model:value="formData[index]" />
           </a-form-item>

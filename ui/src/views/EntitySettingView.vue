@@ -31,6 +31,8 @@
         >
       </div>
       <div class="flex-grow">
+        <!-- 增删改查设置 -->
+        <EntityCrudSetting v-if="selectedKeys[0] == 'crud'" />
         <!-- 字典设置 -->
         <EntityDictSetting v-if="selectedKeys[0] === 'dict'" />
         <!-- 字段设置 -->
@@ -47,6 +49,7 @@ import { SettingOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue'
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import EntityDictSetting from '@/components/EntityDictSetting.vue'
 import EntityFieldSetting from '@/components/EntityFieldSetting.vue'
+import EntityCrudSetting from '@/components/EntityCrudSetting.vue'
 
 const store = useSystemSettingsStore()
 const router = useRouter()

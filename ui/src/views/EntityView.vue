@@ -98,7 +98,6 @@ const getList = async (table) => {
 }
 
 onMounted(async () => {
-  console.log(router)
   await getList(router.currentRoute.value.params.name)
   await initDict(router.currentRoute.value.params.name)
   await initFieldLabels(router.currentRoute.value.params.name)

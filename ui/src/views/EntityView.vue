@@ -26,11 +26,7 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <span>
-            <a><EyeOutlined /></a>
-            <a-divider type="vertical" />
-            <a>
-              <FormOutlined />
-            </a>
+            <a @click="handleView(record)"><EyeOutlined /></a>
             <a-divider type="vertical" />
             <a><DeleteOutlined /></a>
           </span>
@@ -150,12 +146,26 @@ const columns = computed(() => {
     dataIndex: 'action',
     key: 'action',
     fixed: 'right',
-    width: 120,
+    width: 70,
     scopedSlots: { customRender: 'operation' }
   })
 
   return rs
 })
+
+const idField = computed(() => {
+  return store.getSchemaIdField(router.currentRoute.value.params.name)
+})
+
+const handleView = (record) => {
+  router.push({
+    name: 'entity-detail',
+    params: {
+      name: router.currentRoute.value.params.name,
+      id: record[idField.value.name]
+    }
+  })
+}
 
 const pagination = reactive({
   total: 0,

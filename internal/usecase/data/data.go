@@ -17,7 +17,7 @@ func NewUsecase(repo domain.IDataRepository) domain.IDataUsecase {
 	}
 }
 
-func (u *usecase) getRp(ctx context.Context) domain.IDataRepository {
+func (u *usecase) getRp(_ context.Context) domain.IDataRepository {
 	if u.repo != nil {
 		return u.repo
 	}
@@ -32,4 +32,8 @@ func (u *usecase) List(ctx context.Context, req *domain.DataListReq) (*domain.Da
 		return nil, err
 	}
 	return rs, nil
+}
+
+func (u *usecase) Detail(ctx context.Context, req *domain.DataDetailReq) (map[string]any, error) {
+	return u.getRp(ctx).Detail(ctx, req)
 }

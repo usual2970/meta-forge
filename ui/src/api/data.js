@@ -7,3 +7,12 @@ export const list= (data) => {
         params: data
     })
 }
+
+
+export const detail= (data) => {
+  return service({
+        url: "/api/v1/data/detail",
+        method: 'get',
+        params: data
+    })
+}

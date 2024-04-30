@@ -52,6 +52,10 @@ export const useSystemSettingsStore = defineStore('systemsettings', () => {
     })
   }
 
+  const getSchemaIdField = (name) => {
+    return schemaMap.value[name].fields.find((item) => item.isId)
+  }
+
   const menuItems = computed(() => {
     const entities = []
 
@@ -143,6 +147,7 @@ export const useSystemSettingsStore = defineStore('systemsettings', () => {
     saveDict,
     dict,
     getLabel,
-    saveFieldLabel
+    saveFieldLabel,
+    getSchemaIdField
   }
 })

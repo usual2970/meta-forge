@@ -43,6 +43,24 @@ func NewRepository() domain.IDataRepository {
 	}
 }
 
+func (r *repository) Detail(ctx context.Context, req *domain.DataDetailReq) (map[string]any, error) {
+	resp, err := r.List(ctx, &domain.DataListReq{
+		Params:   req.Params,
+		Filter:   req.Filter,
+		Table:    req.Table,
+		Page:     1,
+		PageSize: 1,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.TotalRecords > 0 {
+		return resp.Data[0], nil
+	}
+	return nil, errors.New("not found")
+}
+
 func (r *repository) List(ctx context.Context, req *domain.DataListReq) (*domain.DataListResp, error) {
 	count, err := r.count(ctx, req)
 	if err != nil {

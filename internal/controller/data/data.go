@@ -24,10 +24,25 @@ func (c *controller) List(ctx echo.Context) error {
 	return resp.Succ(ctx, rs)
 }
 
+func (c *controller) Detail(ctx echo.Context) error {
+	req := &domain.DataDetailReq{}
+	if err := ctx.Bind(req); err != nil {
+		return err
+	}
+
+	rs, err := c.uc.Detail(ctx.Request().Context(), req)
+	if err != nil {
+		return resp.Err(ctx, err)
+	}
+
+	return resp.Succ(ctx, rs)
+}
+
 func Register(route *echo.Group, usecase domain.IDataUsecase) {
 	c := &controller{
 		uc: usecase,
 	}
 
 	route.GET("/data/list", c.List)
+	route.GET("/data/detail", c.Detail)
 }

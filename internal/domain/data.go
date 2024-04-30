@@ -12,16 +12,24 @@ type DataListReq struct {
 }
 
 type DataListResp struct {
-	Data         []map[string]interface{} `json:"data"`
-	TotalRecords int                      `json:"totalRecords"`
-	Page         int                      `json:"page"`
-	PageSize     int                      `json:"pageSize"`
+	Data         []map[string]any `json:"data"`
+	TotalRecords int              `json:"totalRecords"`
+	Page         int              `json:"page"`
+	PageSize     int              `json:"pageSize"`
 }
 
 type IDataUsecase interface {
 	List(ctx context.Context, req *DataListReq) (*DataListResp, error)
+	Detail(ctx context.Context, req *DataDetailReq) (map[string]any, error)
+}
+
+type DataDetailReq struct {
+	Filter string `json:"filter" query:"filter"`
+	Table  string `json:"table" query:"table"`
+	Params []any  `json:"params" query:"params"`
 }
 
 type IDataRepository interface {
 	List(ctx context.Context, req *DataListReq) (*DataListResp, error)
+	Detail(ctx context.Context, req *DataDetailReq) (map[string]any, error)
 }

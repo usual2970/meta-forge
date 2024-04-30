@@ -49,6 +49,14 @@ const router = createRouter({
         layout:'Admin'
       },
       component: () => import('../views/EntitySettingView.vue')
+    },
+    {
+      path: '/entity/:name/:id',
+      name: 'entity-detail',
+      meta:{
+        layout:'Admin'
+      },
+      component: () => import('../views/EntityDetailView.vue')
     }
   ]
 })

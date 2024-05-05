@@ -1,7 +1,9 @@
 <template>
   <div class="pt-3 pl-5">
     <a-tabs v-model:activeKey="activeKey">
-      <a-tab-pane key="table" tab="列表"> 列表 </a-tab-pane>
+      <a-tab-pane key="table" tab="列表">
+        <EntityCrudSettingList />
+      </a-tab-pane>
       <a-tab-pane key="detail" tab="详情" force-render>Content of Tab Pane 2</a-tab-pane>
       <a-tab-pane key="delete" tab="删除" force-render>Content of Tab Pane 3</a-tab-pane>
     </a-tabs>
@@ -11,6 +13,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import EntityCrudSettingList from './EntityCrudSettingList.vue'
 
 const router = useRouter()
 

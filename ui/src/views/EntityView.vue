@@ -118,6 +118,7 @@ onBeforeRouteUpdate(async (to, from) => {
   if (to.params.name !== from.params.name) {
     sortedInfo.value = null
     tableName.value = to.params.name
+    crudListSetting.value = []
     await getList(to.params.name)
     await initDict(to.params.name)
     await initFieldLabels(to.params.name)
@@ -174,7 +175,6 @@ const columns = computed(() => {
       .map((item) => {
         return mapRs[item.name]
       })
-    console.log(crudListSetting.value, rs, mapRs)
   }
 
   rs.push({

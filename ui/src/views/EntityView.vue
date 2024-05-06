@@ -97,10 +97,22 @@ const getList = async (table) => {
   }
 }
 
+const crudListSetting = ref([])
+
+const initCrudListSetting = async (name) => {
+  const res = await get({
+    key: `${name}_crud_list`
+  })
+  if (res.code === 0) {
+    crudListSetting.value = res.data
+  }
+}
+
 onMounted(async () => {
   await getList(router.currentRoute.value.params.name)
   await initDict(router.currentRoute.value.params.name)
   await initFieldLabels(router.currentRoute.value.params.name)
+  await initCrudListSetting(router.currentRoute.value.params.name)
 })
 
 onBeforeRouteUpdate(async (to, from) => {
@@ -110,6 +122,7 @@ onBeforeRouteUpdate(async (to, from) => {
     await getList(to.params.name)
     await initDict(to.params.name)
     await initFieldLabels(to.params.name)
+    await initCrudListSetting(to.params.name)
   }
 })
 
@@ -128,17 +141,43 @@ const initFieldLabels = async (name) => {
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {}
-  const rs = store.getSchemaColumns(router.currentRoute.value.params.name).map((column) => {
-    if (column.key === sorted.columnKey && sorted.order) {
-      column.sortOrder = sorted.order
-    } else {
-      column.sortOrder = null
-    }
-    if (fieldLabels.value[column.key]) {
-      column.title = fieldLabels.value[column.key]
-    }
-    return column
-  })
+  let rs = []
+  if (crudListSetting.value.length === 0) {
+    rs = store.getSchemaColumns(router.currentRoute.value.params.name).map((column) => {
+      if (column.key === sorted.columnKey && sorted.order) {
+        column.sortOrder = sorted.order
+      } else {
+        column.sortOrder = null
+      }
+      if (fieldLabels.value[column.key]) {
+        column.title = fieldLabels.value[column.key]
+      }
+      return column
+    })
+  } else {
+    const mapRs = store
+      .getSchemaColumns(router.currentRoute.value.params.name)
+      .reduce((before, column) => {
+        if (column.key === sorted.columnKey && sorted.order) {
+          column.sortOrder = sorted.order
+        } else {
+          column.sortOrder = null
+        }
+        if (fieldLabels.value[column.key]) {
+          column.title = fieldLabels.value[column.key]
+        }
+        before[column.key] = column
+        return before
+      }, {})
+
+    rs = crudListSetting.value
+      .filter((item) => {
+        return item.visible === true
+      })
+      .map((item) => {
+        return mapRs[item.name]
+      })
+  }
 
   rs.push({
     title: '操作',

@@ -42,13 +42,7 @@ import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 
 import { useSystemSettingsStore } from '@/stores/systemsettings'
 import { list } from '@/api/data'
-import {
-  PlusOutlined,
-  SettingOutlined,
-  EyeOutlined,
-  DeleteOutlined,
-  FormOutlined
-} from '@ant-design/icons-vue'
+import { PlusOutlined, SettingOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { batchGet, get } from '@/api/systemsettings'
 import { name2label } from '@/utils/helper'
 
@@ -99,12 +93,16 @@ const getList = async (table) => {
 
 const crudListSetting = ref([])
 
+const tableName = ref(router.currentRoute.value.params.name)
+
 const initCrudListSetting = async (name) => {
   const res = await get({
     key: `${name}_crud_list`
   })
   if (res.code === 0) {
     crudListSetting.value = res.data
+  } else {
+    crudListSetting.value = []
   }
 }
 
@@ -119,6 +117,7 @@ onBeforeRouteUpdate(async (to, from) => {
   // 当路由参数变化时重新获取数据
   if (to.params.name !== from.params.name) {
     sortedInfo.value = null
+    tableName.value = to.params.name
     await getList(to.params.name)
     await initDict(to.params.name)
     await initFieldLabels(to.params.name)
@@ -143,7 +142,7 @@ const columns = computed(() => {
   const sorted = sortedInfo.value || {}
   let rs = []
   if (crudListSetting.value.length === 0) {
-    rs = store.getSchemaColumns(router.currentRoute.value.params.name).map((column) => {
+    rs = store.getSchemaColumns(tableName.value).map((column) => {
       if (column.key === sorted.columnKey && sorted.order) {
         column.sortOrder = sorted.order
       } else {
@@ -155,20 +154,18 @@ const columns = computed(() => {
       return column
     })
   } else {
-    const mapRs = store
-      .getSchemaColumns(router.currentRoute.value.params.name)
-      .reduce((before, column) => {
-        if (column.key === sorted.columnKey && sorted.order) {
-          column.sortOrder = sorted.order
-        } else {
-          column.sortOrder = null
-        }
-        if (fieldLabels.value[column.key]) {
-          column.title = fieldLabels.value[column.key]
-        }
-        before[column.key] = column
-        return before
-      }, {})
+    const mapRs = store.getSchemaColumns(tableName.value).reduce((before, column) => {
+      if (column.key === sorted.columnKey && sorted.order) {
+        column.sortOrder = sorted.order
+      } else {
+        column.sortOrder = null
+      }
+      if (fieldLabels.value[column.key]) {
+        column.title = fieldLabels.value[column.key]
+      }
+      before[column.key] = column
+      return before
+    }, {})
 
     rs = crudListSetting.value
       .filter((item) => {
@@ -177,6 +174,7 @@ const columns = computed(() => {
       .map((item) => {
         return mapRs[item.name]
       })
+    console.log(crudListSetting.value, rs, mapRs)
   }
 
   rs.push({

@@ -72,6 +72,16 @@ Metaforge 就是这样的项目。
 
 - **官方文档**：详细配置指南、API 参考及常见问题解答，请访问 [项目文档站点](https://yourusername.github.io/meta-forge/)。
 
+## ROADMAP
+
+- [x] 基本的增删改查,以及增删改查配置
+- [ ] 多种数据库支持
+- [ ] 联表数据管理
+- [ ] 视图管理
+- [ ] 集成中心
+- [ ] 登录、注册、权限管理
+- [ ] 响应式设计，兼容多种设备
+
 ## 贡献者
 
 感谢所有为 MetaForge 项目做出贡献的开发者们！[查看贡献者列表](https://github.com/usual2970/meta-forge/graphs/contributors)

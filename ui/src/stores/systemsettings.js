@@ -29,16 +29,12 @@ export const useSystemSettingsStore = defineStore('systemsettings', () => {
   })
 
   const getSchemaColumns = (name) => {
-    return schemaMap.value[name].fields.map((item, index) => {
+    return schemaMap.value[name].fields.map((item) => {
       let rs = {
         title: name2label(item.name),
         key: item.name,
         dataIndex: item.name
       }
-      if (index < 3) {
-        rs.fixed = 'left'
-      }
-
       if (item.type == 'number') {
         rs.width = 80
         rs.sorter = (a, b) => {

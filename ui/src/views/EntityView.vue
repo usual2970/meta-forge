@@ -143,7 +143,7 @@ const columns = computed(() => {
   const sorted = sortedInfo.value || {}
   let rs = []
   if (crudListSetting.value.length === 0) {
-    rs = store.getSchemaColumns(tableName.value).map((column) => {
+    rs = store.getSchemaColumns(tableName.value).map((column, index) => {
       if (column.key === sorted.columnKey && sorted.order) {
         column.sortOrder = sorted.order
       } else {
@@ -151,6 +151,10 @@ const columns = computed(() => {
       }
       if (fieldLabels.value[column.key]) {
         column.title = fieldLabels.value[column.key]
+      }
+
+      if (index < 3) {
+        column.fixed = 'left'
       }
       return column
     })
@@ -172,8 +176,12 @@ const columns = computed(() => {
       .filter((item) => {
         return item.visible === true
       })
-      .map((item) => {
-        return mapRs[item.name]
+      .map((item, index) => {
+        const column = mapRs[item.name]
+        if (index < 3) {
+          column.fixed = 'left'
+        }
+        return column
       })
   }
 

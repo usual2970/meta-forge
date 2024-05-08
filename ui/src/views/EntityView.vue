@@ -26,7 +26,9 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <span>
-            <a @click="handleView(record)"><EyeOutlined /></a>
+            <a @click="handleView(record)" v-show="crudDetailSetting.checked == true"
+              ><EyeOutlined
+            /></a>
             <a-divider type="vertical" />
             <a><DeleteOutlined /></a>
           </span>
@@ -92,6 +94,7 @@ const getList = async (table) => {
 }
 
 const crudListSetting = ref([])
+const crudDetailSetting = ref({})
 
 const tableName = ref(router.currentRoute.value.params.name)
 
@@ -106,11 +109,26 @@ const initCrudListSetting = async (name) => {
   }
 }
 
+const initCrudDetailSetting = async (name) => {
+  const res = await get({
+    key: `${name}_crud_detail`
+  })
+  if (res.code === 0) {
+    crudDetailSetting.value = res.data
+  } else {
+    crudDetailSetting.value = {
+      checked: true,
+      fields: []
+    }
+  }
+}
+
 onMounted(async () => {
   await getList(router.currentRoute.value.params.name)
   await initDict(router.currentRoute.value.params.name)
   await initFieldLabels(router.currentRoute.value.params.name)
   await initCrudListSetting(router.currentRoute.value.params.name)
+  await initCrudDetailSetting(router.currentRoute.value.params.name)
 })
 
 onBeforeRouteUpdate(async (to, from) => {
@@ -119,10 +137,15 @@ onBeforeRouteUpdate(async (to, from) => {
     sortedInfo.value = null
     tableName.value = to.params.name
     crudListSetting.value = []
+    crudDetailSetting.value = {
+      checked: true,
+      fields: []
+    }
     await getList(to.params.name)
     await initDict(to.params.name)
     await initFieldLabels(to.params.name)
     await initCrudListSetting(to.params.name)
+    await initCrudDetailSetting(to.params.name)
   }
 })
 

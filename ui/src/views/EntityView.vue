@@ -30,7 +30,7 @@
               ><EyeOutlined
             /></a>
             <a-divider type="vertical" />
-            <a><DeleteOutlined /></a>
+            <a v-show="crudDeleteSetting.checked == true"><DeleteOutlined /></a>
           </span>
         </template>
       </template>
@@ -95,6 +95,7 @@ const getList = async (table) => {
 
 const crudListSetting = ref([])
 const crudDetailSetting = ref({})
+const crudDeleteSetting = ref({})
 
 const tableName = ref(router.currentRoute.value.params.name)
 
@@ -123,12 +124,26 @@ const initCrudDetailSetting = async (name) => {
   }
 }
 
+const initCrudDeleteSetting = async (name) => {
+  const res = await get({
+    key: `${name}_crud_delete`
+  })
+  if (res.code === 0) {
+    crudDeleteSetting.value = res.data
+  } else {
+    crudDeleteSetting.value = {
+      checked: true
+    }
+  }
+}
+
 onMounted(async () => {
   await getList(router.currentRoute.value.params.name)
   await initDict(router.currentRoute.value.params.name)
   await initFieldLabels(router.currentRoute.value.params.name)
   await initCrudListSetting(router.currentRoute.value.params.name)
   await initCrudDetailSetting(router.currentRoute.value.params.name)
+  await initCrudDeleteSetting(router.currentRoute.value.params.name)
 })
 
 onBeforeRouteUpdate(async (to, from) => {
@@ -141,11 +156,15 @@ onBeforeRouteUpdate(async (to, from) => {
       checked: true,
       fields: []
     }
+    crudDeleteSetting.value = {
+      checked: true
+    }
     await getList(to.params.name)
     await initDict(to.params.name)
     await initFieldLabels(to.params.name)
     await initCrudListSetting(to.params.name)
     await initCrudDetailSetting(to.params.name)
+    await initCrudDeleteSetting(to.params.name)
   }
 })
 
@@ -207,15 +226,16 @@ const columns = computed(() => {
         return column
       })
   }
-
-  rs.push({
-    title: '操作',
-    dataIndex: 'action',
-    key: 'action',
-    fixed: 'right',
-    width: 70,
-    scopedSlots: { customRender: 'operation' }
-  })
+  if (crudDetailSetting.value.checked || crudDeleteSetting.value.checked) {
+    rs.push({
+      title: '操作',
+      dataIndex: 'action',
+      key: 'action',
+      fixed: 'right',
+      width: 70,
+      scopedSlots: { customRender: 'operation' }
+    })
+  }
 
   return rs
 })

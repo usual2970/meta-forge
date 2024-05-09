@@ -59,7 +59,7 @@ const getConfig = async () => {
 
 const initData = () => {
   const schema = store.schemaMap[router.currentRoute.value.params.name]
-  if (config.value.length != 0 && config.value.fields.length == schema.fields.length) {
+  if (config.value.fields && config.value.fields.length == schema.fields.length) {
     fields.value = config.value.fields
     checked.value = config.value.checked
     return

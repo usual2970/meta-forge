@@ -18,6 +18,11 @@ export async function initializeMiddleware(to,_from) {
         return {name:"home"}
     }
 
+    // 第一个mvp不要首页
+    if (to.name=='home'){
+        return {name:"entity", params:{name:store.schemas[0].name}}
+    }
+
     return true
 
 }

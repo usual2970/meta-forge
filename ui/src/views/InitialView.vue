@@ -16,7 +16,7 @@
         <a-select v-model:value="formState.kind" placeholder="数据库类型">
           <a-select-option value="">--选择数据库类型--</a-select-option>
           <a-select-option value="mysql">Mysql</a-select-option>
-          <a-select-option value="sqlite">Sqlite</a-select-option>
+          <!-- <a-select-option value="sqlite">Sqlite</a-select-option> -->
         </a-select>
       </a-form-item>
       <template v-if="showFile">

@@ -70,12 +70,12 @@ export const useSystemSettingsStore = defineStore('systemsettings', () => {
     }
 
     return [
-      {
-        key: 'home',
-        icon: () => h(HomeOutlined),
-        label: '首页',
-        title: '首页'
-      },
+      // {
+      //   key: 'home',
+      //   icon: () => h(HomeOutlined),
+      //   label: '首页',
+      //   title: '首页'
+      // },
       {
         key: 'entity',
         icon: () => h(FileOutlined),
